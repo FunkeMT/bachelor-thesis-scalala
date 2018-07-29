@@ -9,7 +9,7 @@
 | Date of Submission | 31st July 2018                                                            |
 
 
-### Thesis Repository
+### Thesis Repositories
 #### Main
 - [ScalalaKata](https://github.com/FunkeMT/ScalalaKata)
 #### Sub
