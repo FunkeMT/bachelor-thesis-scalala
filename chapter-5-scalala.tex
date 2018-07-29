@@ -1,0 +1,115 @@
+\section{Scalala}
+\label{IMPL_SCALALA}
+The DSL was implemented through the Scala GPL. However, this study should not give an introduction to Scala programming; rather, provide the DSL realisation through Scala as host language. Therefore, only the DSL relevant Scala features are emphasised and explained. The design process of a DSL was carefully evaluated and adopted from Mernik's et al. research.\cite{Mernik2005} He described five phases of DSL development and identified patterns in each phase. His patterns are not a guideline on how to implement a DSL in detail, instead of guiding the decision process. The subsections of this section are named and organised by Mernik's pattern-based implementation:
+
+\begin{itemize}
+\item Decision
+\item Analysis
+\item Design
+\item Implementation
+\item Deployment
+\end{itemize}
+
+The name \textit{Scalala} is adopted from the related project Scalala. It is a neologism, which consists of the GPL name \textit{Scala} and the onomatopoeia \textbf{la}. This onomatopoeia alludes to the \textbf{la-la} syllables in songs.
+
+\subsection{Decision}
+\label{IMPL_SCALALA_DECISION}
+The related projects in section \ref{LIT_PROJ} already emphasised that there is no available programming language or holistic approach according to the thesis requirements defined in \ref{INTRO_SOFT}. Furthermore, the aim of this study is to \textit{create a user-friendly notation} and to \textit{transform} notes, which are usually described through visual sheet notes. In conclusion, these aspects map identically with Mernik's "Notation Pattern" and supports the decision to create a new "domain notation".\cite{Mernik2005}
+
+To fulfil the results of Soloway's\cite{Soloway1982}  and Kranch's\cite{Kranch2012} research and create a novice-friendly programming language close to the natural language, the cardinality of external DSLs was used. In addition, external DSLs are more powerful and more flexible by nature (cf. \ref{THEO_DSL}).
+
+\subsection{Analysis}
+\label{IMPL_SCALALA_ANALYSIS}
+Comprehensive analysis is necessary to create a fundamental groundwork for the DSL implementation. The target domain, or "problem domain" has to be carefully examined. The problem domain contains all major artefacts like processes, entities and constraints, which are part of the target business. The process is necessary to create a "common language" between domain expert and developer, to provide communication and prevent errors.\cite{Ghosh2010}
+
+According to this, the "common vocabulary"\cite{Ghosh2010} or "common dictionary"\cite{Riti2018} was developed. An extract of the developed vocabulary is illustrated in table \ref{TBL_COMMONDICT}. Also, the common vocabulary was used to model the "solution domain" which provides all tools, to solve the present problem.\cite{Ghosh2010, Riti2018}
+
+Figure \ref{IMG_DSL_DOMAINS} illustrates the relationships between all named domains and shows, how the common dictionary is used in both domains and acts as the "glue" between both.\cite{Ghosh2010} Even though this comprehensive process is fundamental work, Mernik classifies this process as the most used "Informal Analysis Pattern", since extensive studies or surveys with the target domain were not performed by this project.\cite{Mernik2005}
+
+\begin{table}[h]
+\caption{DSL Common Dictionary (truncated). All "Translations" are simplified.}
+\label{TBL_COMMONDICT}
+\begin{tabular}{l|p{200pt}|l}
+\rowcolor{htwg-teal} 
+\textbf{Problem Domain}      & \textbf{Translation}		& \textbf{Target Domain}     \\
+full score                  						& Sheet music, which contains all instruments and voices. Arranged in a fixed order. 		& track \\
+instruments /  voices 					& A specific instrument which is played by a specific person.							& musician \\
+octave 											& 	An interval between two pitches.																						& octave \\
+note													& combination of pitch and duration.																						& note (a-g) \\
+. . .													& . . . 																																			& . . .
+\end{tabular}
+\end{table}
+
+\begin{figure}[h]
+\caption{Common Dictionary as Glue beteween Problem and Solution Domain.\cite[p. 15]{Ghosh2010}}
+\label{IMG_DSL_DOMAINS}
+\includegraphics[scale=0.5]{dsl_domains}
+\end{figure}
+
+
+
+\subsection{Design}
+\label{IMPL_SCALALA_DESIGN}
+As mentioned in the section before, part of designing a language is to create the solution domain. In this thesis, the solution domain was created by defining the language concepts and the basic DSL architecture. Since the approach is to create an external DSL, according to the "Language Invention" pattern, the language has to be developed from scratch. The automatic generation through modern language generation systems was not possible, because of the "informal" notation and characteristics.\cite{Mernik2005} The language was suitably designed to satisfy both domains:
+
+\begin{itemize}
+\item Developer Domain \newline According to Riti's suggestions, the architecture was developed to encapsulate and hide implementation details to reveal only the parts which are necessary to solve the problem. Further, the system was designed to be easily maintainable.\cite{Riti2018}
+
+\item Novice Domain \newline As suggested by Kranch, the language was designed close to the natural language. The reason to design the language as close to the natural language as possible was that Kranch's researches with novices illustrate, that his subjects applied their knowledge from natural languages to make an analogy to the program elements.\cite{Kranch2012} Another requirement to the language was to teach fundamental programming concepts; like variable declaration/usage, basic arithmetic and method invocation.
+\end{itemize}
+
+Because of the absence of any precise definition in the literature, in which stage the final language grammar should be developed, in the design or in the implementation phase, the chosen approach was to define the grammar during the design phase. However, the grammar has to be designed decoupled of the final implementation.  This can be attributed to the grammar definition language—Extended Backus-Naur Form (EBNF)—which exists independently from any implementation or language in general. Listing \ref{LS_EBNF_TRUNC} highlights the root rule and the sub-rules.
+
+\begin{lstlisting}[caption={EBNF (truncated).}, label=LS_EBNF_TRUNC]
+(*** Terminals ***)
+INSTRUMENT		::=	'instrument';
+MUSICIAN		::=	'musician';
+TEMPO			::=	'tempo';
+WITH			::=	'with';
+TEMPO			::=	'tempo';
+
+STRING	::=	[a-z]+;
+INT	::=	[0-9]+;
+
+
+(*** Non-Terminals ***)
+identifier	::=	STRING;
+song		::=	(musician)* track;   
+track		::=	PLAY (tempo)? musicVars;
+tempo		::=	WITH TEMPO INT;
+musicVars	::=	musicVar (COMMA musicVar)*;
+	
+. . .
+\end{lstlisting}
+
+\subsection{Implementation}
+\label{IMPL_SCALALA_IMPL}
+\input{chapter-5-scalala-impl}
+
+
+\subsection{Deployment}
+\label{IMPL_SCALALA_DEPL}
+In this study, the DSL was deployed as a Scala library. Thus, an easy to apply deployment mechanism to continuous integration tools like \textit{Travis-CI} is possible and the integration into other applications is straightforward.
+\newline
+\newline
+This section illustrated, how the DSL was designed from scratch and implemented by the Scala parser combinator. To conclude, Mernik's decisions guideline\cite{Mernik2005} through patterns provided an excellent basic structure in DSL development. The Scala parser combinators are a reliable approach to implement an external DSL. Through functional programming and pattern matching, an abstraction of the defined grammar was easy to implement. However, since there is no official comprehensive documentation for Scala's parser combinator, it was very time-consuming to become familiar with the library and achieve results.
+
+
+\subsection{MIDI}
+\label{IMPL_SCALALA_MIDI}
+In addition to the \textit{code generation} part of the DSL implementation, the interpreter was also implemented as the generator of the sound result. As already mentioned before, the DSL was implemented on top of the related project Scalala, which already provides the necessary MIDI representation. For the sake of simplicity, some parts of the semantic model rely on the Scalala model and were reused. Since Scalala represents an internal DSL, the implemented external DSL was developed on top of the internal one, which is a frequently used approach in the literature (cf. \cite{Fowler2010}).
+
+While the interpreter is \textit{walking} through the AST recursively, the MIDI representation is constructed incrementally. The MIDI generation process was implemented as a plain Scala class which builds up the basic MIDI file structure and provides public methods to add notes, switch the instrument, set the tempo, etc. The implementation was done according to the MIDI-standard description.\cite{MIDIManufacturersAssociation} As in \ref{THEO_MIDI} described, the MIDI-protocol is constructed through byte-data sets and messages. This approach offers a fully flexible way to create MIDI-sound-files. However, the implementation, as well as the debugging at the byte-level, is less than ideal. Since the MIDI-file represents a binary file, it is not possible to comprehend which sequences were written to the file; a third-party application is necessary to decode the file, examine its contents and verify the correctness. In the thesis's case, the MacOS application \textit{MidiMusicXmlPlayer}\footnote{MidiMusicXmlPlayer v1.60 - \url{http://programfabriken.com}} was used and provided excellent results in MIDI decoding and playback.
+
+
+
+
+
+
+
+
+
+
+
+
+

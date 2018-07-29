@@ -1,0 +1,75 @@
+\documentclass[]{htwg-report}
+
+
+\addbibresource{./bib/library.bib}
+
+\hyphenation{Sca-la-la}
+\hyphenation{Sca-la-Ka-ta}
+\hyphenation{Sca-la-la-Ka-ta}
+
+
+
+\begin{document}
+
+%% Use Roman numerals for the page numbers of the title pages and table of
+%% contents.
+\frontmatter
+
+%% 'reporttype' add background elements to the cover / front page
+%% possible values are:
+%% bachelor	--> B S C
+%% master	--> M S C
+%% other		--> none
+\reporttype{bachelor}
+
+\reporttypetext{Bachelor Thesis}
+
+\title[A DSL and web-based Interpreter for Music Notation]{A Domain-Specific Language and web-based Interpreter for Music Notation}
+
+\author{Markus Funke}
+\studentnumber{291992}
+\studentemail{markus.funke@htwg-konstanz.de}
+
+\doclocation{Konstanz}
+\docdate{31st July 2018}
+
+\makecover[]
+%          
+%% Include an optional title page.
+\input{title}
+
+\input{logo}
+
+
+\input{sworn-declaration}
+
+\input{abstract}
+
+\tableofcontents
+
+%% Use Arabic numerals for the page numbers of the chapters.
+\mainmatter
+
+
+\input{chapter-1}
+\input{chapter-2}
+\input{chapter-3}
+\input{chapter-4}
+\input{chapter-5}
+\input{chapter-6}
+\input{chapter-7}
+\input{chapter-8}
+
+
+
+
+%% Use letters for the chapter numbers of the appendices.
+\appendix
+
+\input{appendix-a}
+\input{appendix-b}
+
+\printbibliography[heading=bibintoc]
+
+\end{document}
+

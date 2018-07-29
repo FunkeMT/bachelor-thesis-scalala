@@ -1,0 +1,24 @@
+\chapter{Discussion}
+\label{DISCUSSION}
+The following chapter discusses the gained results and relates them to other research. Furthermore, this section should give some direction towards future work and discuss some limitations of the developed software.
+
+In section \ref{IMPL_SCALALA} the implemented external DSL was explained in detail, and several example scripts were given and discussed. The decision to implement an external DSL was made since external DSLs offer a wide range of flexibility in the language grammar and there are no restrictions in defining a language close to the target domain vocabulary. Through the Scala parser combinators, a developed EBNF can be directly implemented, even though the familiarisation with this API took longer as excepted because of Scala's Parser Combinator's complex syntax. However, the resulting external DSL provides fluency and is comparable to plain English. Which is one key result from Kranch's\cite{Kranch2012} and Soloway's\cite{Soloway1982, Bonar1985} research in teaching novices programming. In chapter \ref{RESULTS_DSL} programming concepts were shown which can be taught to novices through this developed language.
+
+The designed language fulfils the requirements in fluency and proximity to natural language. However, the cardinality of the music notation could be improved. Chapter \ref{INTRO} already mentioned that the defined DSL might not be a Turing complete language. Obviously, the final language is not Turing complete, since it is impossible to define simple functions or simple arithmetic expressions like $1 + 1$. However, the aim of this study was not to design a Turing complete language but a language which is less complex and may have not the ability of a full programming language or represents the full music bandwidth. An interesting question for further studies could be to examine and to question the correlation between Turing completeness and complexity in languages for novices.
+
+Chapter \ref{RESULTS_WEBAPP} already illustrated, that ScalalaKata is not as interactive as Sonic Pi, because of Sonic Pi's timing model. The main disadvantage of ScalalaKata is that after one DSL script evaluation, the playback repeats from the top. Although this behaviour is evident and does not lead to a confusion of the user, it reduces interactivity. Further studies should examine if it is necessary and helpful to populate modifications interactively. One possible approach to reflect the changes would be to exploit the MIDIPlayerJs library, since this library is the first involved layer which converts the MIDI binary file into readable JSON. Whenever a new DSL script is evaluated, the new JSON could be compared to the last JSON and determine the modifications since the last evaluation.
+
+In the minor case study, the error messages were criticised the most (cf. \ref{RESULTS_STUDY}). Future work should implement a comprehensive exception handling. The Scala Parser Combinators offer a simple way to provide custom error messages for each parser. As explained in \ref{IMPL_SCALALA_IMPL}, the \textit{function application combinators} are a powerful tool to create the semantic model. Besides, the \textit{combinator for \textbf{partial} function application} offers the opportunity to throw custom exceptions if a parser ends in an \texttt{Error} instead of \texttt{Success}. This enables the definition of custom messages for each parser.
+
+Through ScalaKata2 as groundwork application and the extension through MIDI, ScalalaKata represents a comprehensive and convincing approach which is both intuitive and accessible. The application supports cross-platform and mobile devices. Contrary to Sonic Pi and LilyPond, there is no further installation or download necessary. Through the opportunity to access the system everywhere and at any time through mobile devices, the access for everyone was enabled.
+
+
+
+
+
+
+
+
+
+
+

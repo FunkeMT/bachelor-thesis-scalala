@@ -1,0 +1,109 @@
+\section{ScalalaKata}
+\label{IMPL_SCALALAKATA}
+The web-application ScalalaKata provides a user interface to write a DSL script textually and invoke its interpretation. As already mentioned, the application is based on ScalaKata2, since it is a well-suited foundation for this thesis. First, the underlying technologies are briefly explained. The chapter then proceeds to illustrate the client-server-model. Particular attention is paid to the client, since Scala.js as front-end technique was used. The last paragraph elaborates on the deployment of the application.
+
+The name \textit{ScalalaKata} was inspired by the related project \textit{ScalaKata2}. It is a compound of the used DSL \textit{Scalala} and the Japanese word \textit{Kata}. Literally, Kata means \textit{form} and refers back to martial arts and exercises consisting of sequences which are repeatedly practised. Thomas adopted this term to Code Kata to learn and train programming by repeating code snippets over and over.\cite{Thomas2013}
+
+\subsection{Technologies}
+\label{IMPL_SCALALAKATA_TECHS}
+ScalalaKata also uses Scala as GPL; thus a seamless DSL integration and the creation of a consistent ecosystem is provided. Through the \textit{Akka}\footnote{Akka - \url{https://akka.io}} toolkit, Scala offers a full server- and client-side HTTP stack. ScalaKata2 is already pre-configured and implements a primary Akka HTTP server in combination with Scala.js as client.
+
+The front-end is styled through \textit{Less}\footnote{Less - \url{http://lesscss.org}}. Less is a language extension for CSS. Less consists of the Less language and the Less.js JavaScript tool to convert the Less syntax into valid CSS styles.\cite{Lesscss.org}
+
+To provide an incremental compilation, a local as well as published dependency management and deployment mechanism, the \textit{sbt}\footnote{sbt - \url{https://www.scala-sbt.org}} build tool was chosen. Sbt is the standard build tool for Scala and Java projects. Through the incremental compilation, sbt provides a gentle performance and performant recompilation, since it compiles only affected files and dependencies.\cite{LIGHTBENDINC} Sbt, in combination with \textit{node.js}\footnote{node.js - \url{https://nodejs.org/en/}}, accomplishes the converting process for Less and compilation of Scala.js code.
+
+\textit{CodeMirror}\footnote{CodeMirror - \url{https://codemirror.net}} represents the main front-end component. It enables the writing of the DSL script in a web environment. CodeMirror is an adjustable text editor, written in JavaScript, for editing code in the browser.\cite{Codemirror} CodeMirror offers syntax highlighting for the most common programming languages and the opportunity to define new highlighting through RegEx definitions. Furthermore, in-code annotations are available to place error messages or code evaluations in-line.
+
+To playback sound through MIDI in web-environments, third-party JavaScript libraries are necessary. As already mentioned in \ref{ARCH_SEQ}, MIDIPlayerJs converts a MIDI binary file into a higher abstraction. The Soundfont-Player library uses this abstraction in combination with pre-defined soundfont-files to playback sound.
+
+\subsection{Client-Server Model}
+\label{IMPL_SCALALAKATA_CSMODEL}
+The entire ScalalaKata application follows the standard model for web-applications. In particular, the application was divided into server and client part.
+
+\subsubsection{Server}
+\label{IMPL_SCALALAKATA_CSMODEL_SERVER}
+The server part is almost negligible since it represents a simple server solution through Akka HTTP to receive HTTP requests, process the request and answer with a response; regardless if the request ends in an error or not. This process can be verified again by consulting the sequence model from \ref{ARCH_SEQ}. All messages were packed into the JSON notation to provide a generic approach; request, process and response can be explained as follows:
+
+\begin{itemize}
+\item\texttt{Request}\newline
+The request consists of a simple string representation of the written DSL script inside the CodeMirror browser instance.
+
+\item\texttt{Process}\newline
+The request is directly forwarded to the Scalala DSL, without previous modifications. The DSL returns the Scala parser combinator with the result as \texttt{Success}, \texttt{Failure} or \texttt{Error}.
+
+\item\texttt{Response}\newline
+Based on the Scalala DSL result, the response is packaged differently. \texttt{Success} passes the generated MIDI file and adds it to the response—base64 encoded. \texttt{Failure} and \texttt{Error} create a response with the exception message and tries to add the position where the exception happened. Thus, the exception message can be later displayed at the exact code position in the CodeMirror browser instance.
+\end{itemize}
+
+\subsubsection{Client}
+\label{IMPL_SCALALAKATA_CSMODEL_CLIENT}
+The client implementation was very time-consuming since there is no standard approach to playback MIDI in web-environments. The interaction of both JavaScript libraries, MIDIPlayerJS and Soundfont-Player, provides a good solution to work around this problem.
+
+The MIDIPlayerJS library creates an intermediate layer between the MIDI binary file and the browser engine's \texttt{AudioContext} in JSON. For each control sequence within the MIDI file, the library adds an appropriate node representation to the JSON. This builds the JSON structure incrementally. MIDIPlayerJS holds an own time representation, and the events are fired at the right time according to the generated MIDI sequence.
+
+The Soundfont-Player communicates directly with the browser engine \texttt{AudioContext}, which is a complex oscillator by its own and able to control the hardware of the underlying device to generate sound. Through external soundfonts, the library can play sound at a specific \texttt{AudioContext} time. Soundfonts are simple music files, like mp3 and contain, for a specific instrument, all relevant sound representations. This also implies that the sound quality depends on the loaded soundfont. The Soundfont-Player subscribes to events which are fired by the MIDIPlayerJS.
+
+To combine all explained libraries and develop a comprehensive application, native JavaScript code is necessary on the client-side. Due to the underlying Scala environment, Scala.js was used to write the client in a type safe and error reporting manner. To prevent having to write native JavaScript in the client logic, Scala.js façades were utilised. Façades types are similar to TypeScript type definitions. Through native Scala traits and classes, the JavaScript API is mapped with zero overhead to the Scala language—but in a type-safe way.\cite{ScJsDoc}
+
+For the most popular libraries or the used CodeMirror, façade types were already implemented by the open-source community and available as simple sbt library dependencies. For less popular libraries, like the MIDIPlayerJS and Soundfont-Player, an own implementation was unavoidable. To state one advantage: It is not necessary to implement the entire JavaScript library API as a façade, only the used and needed API parts have to be implemented. The implementation is based on annotations and the naming of the traits and methods in the global context. During compile time, the Scala.js compiler tries to map the written façade type to the linked libraries. Through that, it was possible to write Scala.js and use type-safe façade classes within the client logic. Figure \ref{LS_JS_SCALAJS_FACADE} and \ref{LS_SCALAJS_FACADE} compares the native JavaScript API to Scala.js façades.
+
+\begin{lstlisting}[caption={MIDIPlayerJs \texttt{Player} API as native JavaScript}, label=LS_JS_SCALAJS_FACADE]
+new Player(eventHandler, buffer)
+
+loadFile(path)
+loadDataUri(dataUri)
+play()
+stop()
+setTempo(tempo)
+getSongPercentRemaining()
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Scala.js Façade for the MIDIPlayerJs class \texttt{Player}}, label=LS_SCALAJS_FACADE]
+@js.native
+@JSName("MidiPlayer.Player")
+class Player(eventHandler: js.Function = null, buffer: js.Array[Any] = null) extends js.Object {
+
+  def loadFile(path: String): Player = js.native
+  def loadDataUri(dataUri: String): Player = js.native
+  def play(): Player = js.native
+  def stop(): Player = js.native
+  def setTempo(tempo: Int): Unit = js.native
+  def getSongPercentRemaining(): Int = js.native
+
+  def on(eventName: String, handler: js.Function): Unit = js.native
+}
+\end{lstlisting}
+
+
+\subsection{Deployment}
+\label{IMPL_SCALALAKATA_DEPLOY}
+Each developed library, MIDIPlayerJs-Façade, Soundfont-Player-Façade and the Scalala DSL were deployed to public repositories through uploading the corresponding artefacts to a software distribution service\footnote{JFrog Bintray Software Distribution Service - \url{https://bintray.com}}. The main advantage of this solution is that the ScalalaKata application can be cloned and built, without other necessary local dependencies. Furthermore, the developed façades are now part of the Scala.js pre-defined façades and available for the open-source community.
+
+The Scalala DSL is further connected to \textit{Travis-CI}\footnote{Travis-CI - \url{https://travis-ci.org}}, a continuous integration platform which provides information about the compilation status and test execution. Since the DSL is the central part of the holistic application, this connection provides a solution to keep the library on a safe build-status.
+
+\textit{Docker}\footnote{Docker - \url{https://www.docker.com}} has proven to be the simplest way to deploy the ScalalaKata application, due to the number of sub-modules and dependencies like Scala.js and other. The Docker build process was essentially adapted to the build process in ScalaKata2 and was implemented through the sbt-plugin \textit{sbt-docker}. The plugin enables the build of a Docker image through the sbt build process. No further Docker configuration files are necessary. Besides, the plugin offers the possibility to provide the Docker image locally or publicly. The published libraries and façades support the Docker build process; they do not have to be available at the production web-server and are loaded directly from the distribution service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
