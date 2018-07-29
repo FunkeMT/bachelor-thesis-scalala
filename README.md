@@ -1,10 +1,25 @@
-# HTWG Corporate Identity LaTeX Template for Reports and Theses
+# Bachelor Thesis
 
-> Based on _tudelft-report-latex_
-> 
-> see: [GitHub: tudelft-report-latex @ 4983bea](https://github.com/praseodym/tudelft-report-latex/tree/4983bea3e88ae9010bc25576f36ebefed3257228)
 
-## HTWG Corporate Design
+| Title              | "A Domain-Specific Language and web-based Interpreter for Music Notation" |
+|--------------------|---------------------------------------------------------------------------|
+| Author             | Markus Funke                                                              |
+| Degree             | Bachelor of Science in Applied Computer Science                           |
+| University         | Hochschule Konstanz University of Applied Sciences                        |
+| Date of Submission | 31st July 2018                                                            |
 
-see: [HTWG Konstanz Corporate-Design-Logo](https://www.htwg-konstanz.de/hochschule/einrichtungen/stabsstelle-kommunikation/corporate-design-logo/)
 
+### Thesis Repositories
+#### Main
+- [ScalalaKata](https://github.com/FunkeMT/ScalalaKata)
+#### Sub
+- [Scalala](https://github.com/FunkeMT/scalala)
+- [scala-js-MidiPlayerJS](https://github.com/FunkeMT/scala-js-MidiPlayerJS)
+- [scala-js-soundfontPlayer](https://github.com/FunkeMT/scala-js-soundfontPlayer)
+
+
+### LaTex Template
+
+> Based on _htwg-latex_
+>
+> see: [https://github.com/FunkeMT/htwg-latex](https://github.com/FunkeMT/htwg-latex)
