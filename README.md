@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/FunkeMT/bachelor-thesis-scalala.svg?branch=master)](https://travis-ci.org/FunkeMT/bachelor-thesis-scalala)
-
 # Bachelor Thesis
+
+[![Build Status](https://travis-ci.org/FunkeMT/bachelor-thesis-scalala.svg?branch=master)](https://travis-ci.org/FunkeMT/bachelor-thesis-scalala)
 
 
 | Title              | "A Domain-Specific Language and web-based Interpreter for Music Notation" |
